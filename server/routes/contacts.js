@@ -52,7 +52,7 @@ router.get('/email/:x', auth, async (req, res) => {
             Emails: {
                 $in : [email],
             }
-        })
+        }).sort({name: "asc"});
 
         if(!contacts) {
             return res.send('No Contact Found');
@@ -75,7 +75,7 @@ router.get('/phone/:x', auth, async(req, res) => {
             Phones: {
                 $in: [number]
             }
-        });
+        }).sort({name: "asc"});;
 
         if(!contacts) {
             return res.send('No Contact Found');
@@ -100,7 +100,7 @@ router.get('/name/:x', auth, async(req, res) => {
                 $regex : name,
                 $options: 'i',
             }
-        });
+        }).sort({name: "asc"});;
 
         if(!contacts) {
             return res.send('No Contact Found');
