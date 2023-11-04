@@ -1,6 +1,7 @@
 const mongoose =require('mongoose');
 const jwt = require('jsonwebtoken');
 const { Schema } = require('mongoose');
+const { Contact } = require('./Contacts');
 
 const userSchema = new Schema({
     name: {
@@ -38,7 +39,11 @@ userSchema.methods.generateAuthToken = function() {
 }
 
 
-
+userSchema.pre('remove', async function(next) {
+    const user = this;
+    await Contact.deleteMany({owner: user._id});
+    next();
+})
 
 const User = mongoose.model('User', userSchema);
 
