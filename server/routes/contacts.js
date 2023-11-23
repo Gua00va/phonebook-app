@@ -163,10 +163,10 @@ router.patch('/:id', auth, async (req, res) => {
 // Auth required
 router.delete('/:id', auth, async(req, res) => {
     try {
-        const _id = req.body.id;
+        const _id = req.params.id;
         const contact = await Contact.findOneAndDelete({
             owner: req.user._id,
-            id: _id,
+            _id: _id,
         });
 
         if (!contact) {
