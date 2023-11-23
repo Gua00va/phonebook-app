@@ -11,13 +11,16 @@ const contactSchema = new mongoose.Schema({
         required: true,
     },
 
-    Phones: [Number],
+    Phones: {
+        type: [Number],
+    },
     Emails: [String],
     DOB: {
-        type: Date
+        type: Date,
+        default : null,
     } 
 })
 
-const Contact= mongoose.model('Contact', contactSchema);
+const Contact = mongoose.model('Contact', contactSchema);
 
 module.exports = { Contact };

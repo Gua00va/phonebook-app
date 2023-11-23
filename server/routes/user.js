@@ -6,8 +6,12 @@ const router = express.Router();
 // No auth
 router.post('/', async (req, res) => {
     const name = req.body.name;
-    const email =req.body.email;
+    const email = req.body.email;
     const password = req.body.password;
+
+    if(!name || !email || !password) {
+        return res.send('Fill all fields!');
+    }
 
     try {
         let user = await User.findOne({email});
@@ -36,7 +40,7 @@ router.post('/', async (req, res) => {
 
 // login
 // No auth
-router.get('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
@@ -44,14 +48,14 @@ router.get('/login', async (req, res) => {
         const user = await User.findOne({email});
 
         if(!user) {
-            return res.send('Name or Password is incorrect!');
+            return res.send('Email or Password is incorrect!');
         }
 
         if(password != user.password) {
-            return res.send('Name or Password is incorrect!');
+            return res.send('Email or Password is incorrect!');
         }
 
-        token = user.generateAuthToken();
+        token = user.generateAuthToken().token;
 
         res.status(200).send(token);
     } catch(e) {

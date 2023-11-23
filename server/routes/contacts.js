@@ -12,11 +12,20 @@ router.post('/', auth, async(req, res) => {
     const DOB = req.body.DOB ? req.body.DOB : "";
     // console.log(DOB);
     
+    if(!name || !number) {
+        return res.send("Name and Number cannot be empty");
+    }
+
     try {
         let contact = await Contact.findOne({
-            Phones : {
-                $in : [number],
+            $or: [
+                {name: name},
+                {
+                    Phones : {
+                    $in : [number],
+                }
             }
+            ]
         })
 
         if(contact) {
@@ -161,7 +170,7 @@ router.delete('/:id', auth, async(req, res) => {
         });
 
         if (!contact) {
-            res.status(404).send();
+            res.status(404).send('No Contact Found');
         }
     
         res.send(contact);
