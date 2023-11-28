@@ -2,6 +2,7 @@ const express = require('express');
 const auth = require('../middleware/auth');
 const { Contact } = require('../models/Contacts');
 const router = express.Router();
+const validator = require('validator');
 
 // create contact
 // Auth required
@@ -17,6 +18,15 @@ router.post('/', auth, async(req, res) => {
     }
 
     try {
+
+        if(number.length != 10) {
+            return res.status(400).send('Number is Incorrect');
+        }
+
+        if(!validator.isEmail(email)) {
+            return res.status(400).send('Invalid Email');
+        }
+
         let contact = await Contact.findOne({
             $or: [
                 {name: name},
@@ -127,9 +137,9 @@ router.get('/name/:x', auth, async(req, res) => {
 // Auth Required
 router.patch('/:id', auth, async (req, res) => {
     try {
+
         const _id = req.params.id;
         const contact = await Contact.findOne({
-            owner: req.user._id,
             _id: _id,
         });
 
@@ -137,7 +147,15 @@ router.patch('/:id', auth, async (req, res) => {
             return res.send('No Contact Found');
         }
 
+        if(contact.owner !== req.user) {
+            return res.status(401).send('Unauthorized');
+        }
+
         const updates = Object.keys(req.body);
+
+        if((updates.number && updates.number.length != 10) || (updates.email && validator.isEmail(updates.email))) {
+            return res.status(402).send('Invalid Updates');
+        }
         updates.forEach((update) => {
             console.log(update.toString());
             if(update.toString() === "name" || update.toString() === "DOB") {
